@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  database:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongodb:/data/db # data is stored in host system for persistency
+    env_file:
+      - ./mongodb.env
+
+  backend:
+    build: ./backend
+    container_name: nodejs
+    volumes:
+      - nodejs:/backend/src # data is stored in host system for persistency
+    ports:
+      - 8000:8000
+    depends_on:
+      - database # service name : on line 3
+
+  frontend:
+    build: ./frontend
+    container_name: reactjs
+    volumes:
+      - reactjs:/frontend/src # data is stored in host system for persistency
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend # service name : on line 11
+    stdin_open: true # running in interactive mode
+    tty: true # running in interactive mode
+
+volumes:
+  mongodb:
+  nodejs:
+  reactjs:
+    driver: local
